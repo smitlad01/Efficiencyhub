@@ -1,4 +1,4 @@
-﻿# EfficiencyHub Automated Windows Installer & Gateway Script
+# EfficiencyHub Automated Windows Installer & Gateway Script
 # Safely downloads, unblocks Mark-of-the-Web, and launches EfficiencyHub
 
 [CmdletBinding()]

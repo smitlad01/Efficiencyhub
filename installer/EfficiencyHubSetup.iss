@@ -32,6 +32,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\EfficiencyHub.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\1-CLICK-START-HERE.bat"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\README_FIRST.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\app.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\AutoEfficiencyWatcher.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\server.js"; DestDir: "{app}"; Flags: ignoreversion

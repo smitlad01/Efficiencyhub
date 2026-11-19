@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Builds the standalone EfficiencyHub Windows installer executable using Inno Setup.
 .PARAMETER OutputDir
