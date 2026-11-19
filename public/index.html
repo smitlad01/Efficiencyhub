@@ -941,6 +941,17 @@
         </div>
     </header>
 
+    <!-- Offline File Protocol Gateway Notice -->
+    <div id="offlineGatewayNotice" class="offline-gateway-banner" style="display: none; background: rgba(239, 68, 68, 0.15); border-bottom: 1px solid rgba(239, 68, 68, 0.35); padding: 10px 24px; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 10px; color: #fca5a5;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <span style="font-size: 12px; font-weight: 500;">Offline Gateway: To ensure 100% active optimizations and live sync, run <strong>EfficiencyHub.exe</strong> from your desktop or install folder.</span>
+        </div>
+        <button onclick="checkGatewayConnection()" style="background: rgba(239, 68, 68, 0.25); color: #fff; border: 1px solid #ef4444; border-radius: 4px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer;">
+            Connect Gateway
+        </button>
+    </div>
+
     <!-- Elevation Alert Container (R2) -->
     <div id="elevationPrompt" class="admin-warning-banner" style="display: none; background: rgba(245, 158, 11, 0.12); border-bottom: 1px solid var(--accent-amber-border); padding: 10px 24px; align-items: center; justify-content: space-between;">
         <div style="display: flex; align-items: center; gap: 10px; color: var(--accent-amber);">
@@ -1119,6 +1130,23 @@
     <div id="toastAlert" class="toast-strip"></div>
 
     <script>
+        const API_BASE = (window.location.protocol === 'file:') ? 'http://127.0.0.1:5252' : '';
+
+        async function checkGatewayConnection() {
+            if (window.location.protocol === 'file:') {
+                try {
+                    const res = await fetch('http://127.0.0.1:5252/api/status');
+                    if (res.ok) {
+                        window.location.replace('http://127.0.0.1:5252');
+                        return;
+                    }
+                } catch (e) {
+                    const banner = document.getElementById('offlineGatewayNotice');
+                    if (banner) banner.style.display = 'flex';
+                }
+            }
+        }
+
         let liveProcesses = [];
         let systemRules = { efficiency: [], normal: [], auto_kill_on_close: [], ban_from_background: [] };
         let activeScope = 'all';
@@ -1134,7 +1162,7 @@
 
         async function fetchSystemMemory() {
             try {
-                const res = await fetch('/api/system');
+                const res = await fetch(API_BASE + '/api/system');
                 if (res.ok) {
                     const data = await res.json();
                     document.getElementById('memBar').style.width = `${data.percentUsed}%`;
@@ -1146,8 +1174,8 @@
         async function refreshCoreData() {
             try {
                 const [pRes, rRes] = await Promise.all([
-                    fetch('/api/processes'),
-                    fetch('/api/rules')
+                    fetch(API_BASE + '/api/processes'),
+                    fetch(API_BASE + '/api/rules')
                 ]);
 
                 liveProcesses = await pRes.json();
@@ -1590,7 +1618,7 @@
             renderLedger();
 
             try {
-                const res = await fetch('/api/rules/toggle', {
+                const res = await fetch(API_BASE + '/api/rules/toggle', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: targetName, target: targetName, mode: mode, type: mode, enabled: willEnable })
@@ -1662,7 +1690,7 @@
             renderLedger();
 
             try {
-                const res = await fetch('/api/rules/toggle', {
+                const res = await fetch(API_BASE + '/api/rules/toggle', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -1698,7 +1726,7 @@
         async function executeKill(pid, name, closeAll) {
             const descriptor = closeAll ? `tree [${name}]` : `PID ${pid}`;
             try {
-                const res = await fetch('/api/process/kill', {
+                const res = await fetch(API_BASE + '/api/process/kill', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pid, name, closeAll })
@@ -1731,7 +1759,7 @@
         // R2 & R3 Elevation and Update Checkers
         async function checkSystemStatus() {
             try {
-                const res = await fetch('/api/status');
+                const res = await fetch(API_BASE + '/api/status');
                 if (!res.ok) return;
                 const data = await res.json();
                 const banner = document.getElementById('elevationPrompt');
@@ -1778,7 +1806,7 @@
                     btn.textContent = 'Launching UAC...';
                 }
                 notify('Requesting Administrator elevation...');
-                const res = await fetch('/api/elevate', {
+                const res = await fetch(API_BASE + '/api/elevate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ dryRun: false })
@@ -1831,7 +1859,7 @@
 
         async function checkForUpdates() {
             try {
-                const res = await fetch('/api/updates/check');
+                const res = await fetch(API_BASE + '/api/updates/check');
                 if (!res.ok) return;
                 const data = await res.json();
                 const banner = document.getElementById('updateNotification');
@@ -1846,8 +1874,8 @@
         async function applyUpdate() {
             try {
                 notify('Downloading and staging update...');
-                await fetch('/api/updates/download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
-                const res = await fetch('/api/updates/apply?dryRun=true', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dryRun: true }) });
+                await fetch(API_BASE + '/api/updates/download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+                const res = await fetch(API_BASE + '/api/updates/apply?dryRun=true', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dryRun: true }) });
                 const data = await res.json();
                 notify(data.success ? 'Update staged. Ready to restart.' : data.error);
             } catch (e) {
@@ -1860,6 +1888,7 @@
         setInterval(fetchSystemMemory, 5000);
         setInterval(checkSystemStatus, 4000);
 
+        checkGatewayConnection();
         refreshCoreData();
         fetchSystemMemory();
         checkSystemStatus();

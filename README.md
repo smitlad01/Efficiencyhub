@@ -118,19 +118,25 @@ node server.js
 
 ## Usage
 
-1. Launch EfficiencyHub by running `start_dashboard.bat` or executing:
-   ```cmd
-   node server.js
-   ```
-2. Open your web browser and navigate to:
-   ```
-   http://127.0.0.1:5252
-   ```
-3. **Registering a Rule**:
-   - Type an application name (e.g. `discord`, `spotify`, `steam`, `notion`) into the **Register Policy** bar.
+### 🎯 1-Click Unified Gateway (`EfficiencyHub.exe`)
+Simply double-click the **EfficiencyHub** shortcut on your Desktop or `EfficiencyHub.exe` in the installed directory:
+- **Zero Configuration**: Automatically verifies and launches `AutoEfficiencyWatcher.exe` and `server.js` silently in the background (no persistent terminal windows).
+- **100% Working Mode**: Ensures all backend hooks, named pipe IPC, and real-time process synchronizations are live before opening `http://127.0.0.1:5252`.
+- **Filesystem Resilient**: Double-clicking `index.html` directly from Explorer automatically connects to the local gateway or informs you of daemon status, so opening any file will never disrupt your workflow.
+
+### Alternative: CLI / Source Launch
+```cmd
+node server.js
+```
+Then navigate to `http://127.0.0.1:5252`.
+
+### Managing Policies & Processes:
+1. **Registering a Rule**:
+   - Type an application name (e.g. `discord`, `spotify`, `steam`, `notion`) into the **Register Policy** dock.
    - Click **+ Auto-Kill on Close** to terminate the app whenever its window is closed.
    - Click **+ Enforce EcoQoS** to lock its priority to idle efficiency mode.
-4. **Elevation**:
+   - Click **+ Quarantine Spawn** to terminate unwanted background updaters on sight.
+2. **Elevation**:
    - If started unprivileged, a banner will appear at the top. Click **Relaunch as Administrator** to grant full process management privileges in one click.
 
 ---

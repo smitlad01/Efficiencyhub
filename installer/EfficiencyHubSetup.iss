@@ -24,17 +24,19 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
+Source: "..\EfficiencyHub.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\app.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\AutoEfficiencyWatcher.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\server.js"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\rules.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\public\*"; DestDir: "{app}\public"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\EfficiencyHub"; Filename: "{app}\AutoEfficiencyWatcher.exe"
-Name: "{autodesktop}\EfficiencyHub"; Filename: "{app}\AutoEfficiencyWatcher.exe"; Tasks: desktopicon
+Name: "{group}\EfficiencyHub"; Filename: "{app}\EfficiencyHub.exe"; IconFilename: "{app}\app.ico"
+Name: "{autodesktop}\EfficiencyHub"; Filename: "{app}\EfficiencyHub.exe"; IconFilename: "{app}\app.ico"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\AutoEfficiencyWatcher.exe"; Description: "{cm:LaunchProgram,EfficiencyHub}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\EfficiencyHub.exe"; Description: "{cm:LaunchProgram,EfficiencyHub}"; Flags: nowait postinstall skipifsilent
 
 [Code]
 // Pre-flight Dependency & Permission Verification

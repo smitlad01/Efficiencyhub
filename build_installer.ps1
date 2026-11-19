@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Builds the standalone EfficiencyHub Windows installer executable using Inno Setup.
 .PARAMETER OutputDir
@@ -22,6 +22,8 @@ Write-Host "=============================================" -ForegroundColor Cyan
 
 # 1. Validate required source inputs
 $requiredFiles = @(
+    (Join-Path $root "EfficiencyHub.exe"),
+    (Join-Path $root "app.ico"),
     (Join-Path $root "server.js"),
     (Join-Path $root "AutoEfficiencyWatcher.exe"),
     (Join-Path $root "rules.json"),
@@ -49,6 +51,7 @@ $isccCandidates = @(
     (Get-Command "ISCC" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source),
     "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
     "${env:ProgramFiles}\Inno Setup 6\ISCC.exe",
+    "${env:LOCALAPPDATA}\Programs\InnoSetup\ISCC.exe",
     "${env:LOCALAPPDATA}\Programs\Inno Setup 6\ISCC.exe"
 )
 

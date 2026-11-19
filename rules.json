@@ -31,14 +31,16 @@
     "nvcontainer",
     "antigravity ide",
     "powershell",
-    "msedgewebview2"
+    "msedgewebview2",
+    "agy"
   ],
   "normal": [
     "chrome",
     "brave",
     "code",
     "hp.omen.omencommandcenter",
-    "svchost"
+    "svchost",
+    "dwm"
   ],
   "auto_kill_on_close": [
     "discord",
