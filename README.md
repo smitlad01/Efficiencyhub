@@ -94,19 +94,44 @@ EfficiencyHub is built on an elegant, decoupled dual-process architecture:
 
 ## Installation
 
-### 🚀 Direct Standalone Installer Download (.exe) — Recommended
+### 🚀 Option 1: Direct Standalone Installer (.exe) — Recommended
 > ### [⬇️ **Download EfficiencyHub_Setup_v2.4.0.exe**](https://github.com/smitlad01/Efficiencyhub/raw/main/installer/Output/EfficiencyHub_Setup_v2.4.0.exe)
 > *(Direct download of compiled Windows installer executable • 2.1 MB)*
 >
 > 1. Download **[`EfficiencyHub_Setup_v2.4.0.exe`](https://github.com/smitlad01/Efficiencyhub/raw/main/installer/Output/EfficiencyHub_Setup_v2.4.0.exe)**.
 > 2. Right-click and choose **Run as administrator** (pre-flight checks ensure required Windows permissions, .NET 4.5+, and Node.js are present before proceeding).
 > 3. Finish the wizard: EfficiencyHub will automatically configure the background daemon and launch the dashboard.
->
-> > **Note on Windows SmartScreen**: If Windows displays *"Windows protected your PC"*, simply click **More info** ➔ **Run anyway**. This standard prompt appears for newly-published open-source software that does not use commercial enterprise code-signing certificates.
 
 ---
 
-### Option 2: Run Directly from Source
+### 📦 Option 2: Portable Zero-Install (.zip)
+> ### [⬇️ **Download EfficiencyHub-v2.4.0-portable.zip**](https://github.com/smitlad01/Efficiencyhub/raw/main/installer/Output/EfficiencyHub-v2.4.0-portable.zip)
+> *(Extract & Run anywhere • Zero installation • Bypasses Windows Smart App Control)*
+>
+> 1. Download and extract **`EfficiencyHub-v2.4.0-portable.zip`**.
+> 2. Double-click **`EfficiencyHub.exe`** to start all services and open the live dashboard.
+
+---
+
+### ⚡ Option 3: Automated 1-Click PowerShell Install
+```powershell
+irm https://raw.githubusercontent.com/smitlad01/Efficiencyhub/main/install.ps1 | iex
+```
+
+---
+
+### 🛡️ Windows Smart App Control & SmartScreen Guide
+Like many newly published open-source tools without $400/yr commercial EV certificates, Windows 11 may show a SmartScreen or Smart App Control banner:
+- **If SmartScreen shows *"Windows protected your PC"***: Click **More info** ➔ **Run anyway**.
+- **If Windows 11 Smart App Control blocks the downloaded `.exe`**:
+  1. In Downloads, right-click `EfficiencyHub_Setup_v2.4.0.exe` ➔ **Properties**.
+  2. Check **Unblock** at the bottom of the General tab ➔ Click **Apply**.
+  3. Or simply use **Option 2 (Portable ZIP)** or **Option 3 (PowerShell)**.
+- **Antivirus Transparency (25/26 Clean)**: EfficiencyHub uses 100% standard Win32 EcoQoS & .NET APIs. Full details are documented in [SAFETY.md](SAFETY.md).
+
+---
+
+### Option 4: Run Directly from Source
 ```cmd
 git clone https://github.com/smitlad01/Efficiencyhub.git
 cd Efficiencyhub

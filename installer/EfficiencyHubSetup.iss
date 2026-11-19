@@ -16,6 +16,13 @@ Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=admin
 ArchitecturesInstallIn64BitMode=x64
+SetupIconFile=..\app.ico
+VersionInfoVersion=2.4.0.0
+VersionInfoCompany=EfficiencyHub Open Source
+VersionInfoDescription=EfficiencyHub System Performance Governor & Task Manager Optimizer
+VersionInfoCopyright=Copyright (c) 2026 Smit Lad & Contributors
+VersionInfoProductName=EfficiencyHub
+VersionInfoProductVersion=2.4.0
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -74,13 +81,16 @@ begin
   end;
 
   // 3. Node.js Runtime Check
-  if not Exec('cmd.exe', '/c node -v', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) or (ResultCode <> 0) then
+  if not Exec('node.exe', '-v', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) or (ResultCode <> 0) then
   begin
-    MsgBox('EfficiencyHub requires the Node.js runtime to be installed and available in PATH.' + #13#10 +
-           'Please install Node.js (v18+) from https://nodejs.org before continuing.',
-           mbCriticalError, MB_OK);
-    Result := False;
-    Exit;
+    if not Exec('cmd.exe', '/c node -v', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) or (ResultCode <> 0) then
+    begin
+      MsgBox('EfficiencyHub requires the Node.js runtime to be installed and available in PATH.' + #13#10 +
+             'Please install Node.js (v18+) from https://nodejs.org before continuing.',
+             mbCriticalError, MB_OK);
+      Result := False;
+      Exit;
+    end;
   end;
 
   Result := True;

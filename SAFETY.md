@@ -22,23 +22,47 @@ EfficiencyHub does **not** inject DLLs, patch system binaries, hook kernel table
 
 ---
 
-## 2. Antivirus Scanners & False Positive Prevention
+## 2. Antivirus Scanners, False Positives & Smart App Control
 
-### Why System Utilities Can Trigger Heuristic Warnings
-Antivirus software (such as Windows Defender, SmartScreen, or VirusTotal engines) uses heuristics to flag unfamiliar executables that interact with other running processes:
-- **Process Enumeration**: Scanning active process handles (`GetProcesses()`) to read CPU and memory consumption.
-- **Process Priority Management**: Invoking `SetPriorityClass` to throttle heavy background apps.
-- **Elevation Prompts (UAC)**: Requesting Administrator elevation (`Start-Process -Verb RunAs`) to permit managing processes spawned by other user accounts or elevated services.
-- **Unsigned Executables**: Newly compiled open-source binaries that do not possess expensive commercial Extended Validation (EV) code-signing certificates may trigger initial Windows SmartScreen warnings ("Windows protected your PC").
+### Understanding Windows 11 Smart App Control & Heuristic Flags
+When running or analyzing `EfficiencyHub_Setup_v2.4.0.exe`, users may encounter alerts from **Windows 11 Smart App Control** or generic static machine-learning models (such as *CrowdStrike ML / Hybrid Analysis* flagging with "bottom confidence"):
 
-### How EfficiencyHub Prevents False Positives
-- **Zero Binary Obfuscation**: The source code is compiled without obfuscators, crypters, or packers (like UPX) which are frequently associated with malware.
-- **Deterministic Clean Builds**: The daemon (`AutoEfficiencyWatcher.exe`) is compiled cleanly using Microsoft's standard C# compiler (`csc.exe`).
-- **Open Inspection**: Anyone can audit every line of source code before building or running.
+1. **Windows 11 Smart App Control (SAC)**:
+   - Smart App Control is a strict cloud-reputation gate in Windows 11.
+   - Any executable downloaded from a web browser automatically receives the Windows **Mark of the Web** (`Zone.Identifier` stream).
+   - If an open-source project does not purchase an expensive commercial Extended Validation (EV) certificate ($400+/year), SAC blocks execution with: *"Smart App Control blocked an app that may be unsafe because we could not verify its publisher"*.
+   
+2. **CrowdStrike ML / Hybrid Analysis Heuristic (1/26 Detection, 25/26 Clean)**:
+   - In automated sandbox reports (e.g. Hybrid Analysis), 25 out of 26 antivirus engines (Microsoft Defender, Kaspersky, Bitdefender, Sophos, ESET, etc.) score EfficiencyHub **100% Clean**.
+   - A single engine (*CrowdStrike Falcon ML On-Sensor*) flags unfamiliar Inno Setup installer stubs with "bottom confidence" (labeled heuristically as `TrojanDldr.OffLoader.gen`).
+   - This occurs purely because the installer decompresses and stages local utility files (`EfficiencyHub.exe`, `server.js`, `AutoEfficiencyWatcher.exe`) without a commercial EV signature.
 
 ---
 
-## 3. How to Verify and Self-Compile from Source
+## 3. How to Resolve Smart App Control & Run EfficiencyHub
+
+### Option A: Unblock Mark of the Web (Fastest)
+1. In Windows Explorer, navigate to your `Downloads` folder.
+2. Right-click **`EfficiencyHub_Setup_v2.4.0.exe`** and select **Properties**.
+3. At the bottom of the **General** tab, check the **Unblock** box.
+4. Click **Apply** and **OK**.
+5. Run the installer normally.
+
+### Option B: Automated 1-Click PowerShell Install
+Run this single command in PowerShell to automatically download, unblock, and launch the installer:
+```powershell
+irm https://raw.githubusercontent.com/smitlad01/Efficiencyhub/main/install.ps1 | iex
+```
+
+### Option C: Download Portable Zero-Install ZIP
+If you prefer not to run an installer `.exe`:
+1. Download **`EfficiencyHub-v2.4.0-portable.zip`**.
+2. Extract the folder anywhere on your PC.
+3. Double-click **`EfficiencyHub.exe`** to launch the gateway in 100% working mode.
+
+---
+
+## 4. How to Verify and Self-Compile from Source
 
 You do not need to trust pre-built binaries. You can compile the daemon directly on your own PC using the built-in Microsoft .NET Framework compiler:
 

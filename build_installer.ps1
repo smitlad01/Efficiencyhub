@@ -38,7 +38,7 @@ foreach ($filePath in $requiredFiles) {
         exit 1
     }
 }
-Write-Host "[✓] All source assets and Inno Setup configuration verified." -ForegroundColor Green
+Write-Host "[v] All source assets and Inno Setup configuration verified." -ForegroundColor Green
 
 # 2. Ensure output directory exists
 if (-not (Test-Path $OutputDir)) {
@@ -72,7 +72,7 @@ if ($isccPath) {
         throw "ISCC compilation failed with exit code $LASTEXITCODE"
         exit $LASTEXITCODE
     }
-    Write-Host "[✓] Installer compiled successfully in: $OutputDir" -ForegroundColor Green
+    Write-Host "[v] Installer compiled successfully in: $OutputDir" -ForegroundColor Green
 } else {
     Write-Host "[i] Inno Setup compiler (ISCC.exe) was not found on PATH or standard program directories." -ForegroundColor Yellow
     Write-Host "    Configuration script validated: $issFile" -ForegroundColor Yellow

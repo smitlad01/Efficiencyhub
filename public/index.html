@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KINETIC // OS SysGovernor</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --surface-ground: #07080b;
@@ -17,16 +20,16 @@
             --border-faint: rgba(255, 255, 255, 0.04);
             --border-structural: #1e2433;
             --border-focus: #3b82f6;
-            
+
             --text-heading: #f8fafc;
             --text-body: #94a3b8;
             --text-muted: #526077;
             --text-ghost: #384252;
-            
+
             --accent-emerald: #10b981;
             --accent-emerald-faint: rgba(16, 185, 129, 0.08);
             --accent-emerald-border: rgba(16, 185, 129, 0.22);
-            
+
             --accent-sky: #38bdf8;
             --accent-sky-faint: rgba(56, 189, 248, 0.08);
             --accent-sky-border: rgba(56, 189, 248, 0.2);
@@ -93,7 +96,7 @@
             align-items: center;
             justify-content: center;
             color: var(--accent-emerald);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
 
         .title-block {
@@ -183,8 +186,17 @@
         }
 
         @keyframes nodePulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.85); }
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.85);
+            }
         }
 
         /* 2. Main Workbench Layout */
@@ -301,14 +313,14 @@
             background: var(--surface-card);
             color: var(--text-heading);
             font-weight: 600;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .tab-counter {
             font-family: var(--font-mono);
             font-size: 10px;
             color: var(--text-muted);
-            background: rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.04);
             padding: 1px 5px;
             border-radius: 3px;
         }
@@ -408,6 +420,7 @@
             color: var(--accent-emerald);
             border-color: var(--accent-emerald-border);
         }
+
         .btn-policy-eff:hover {
             background: var(--accent-emerald);
             color: #030712;
@@ -419,6 +432,7 @@
             color: var(--accent-amber);
             border-color: var(--accent-amber-border);
         }
+
         .btn-policy-kill:hover {
             background: var(--accent-amber);
             color: #030712;
@@ -430,6 +444,7 @@
             color: var(--accent-rose);
             border-color: var(--accent-rose-border);
         }
+
         .btn-policy-ban:hover {
             background: var(--accent-rose);
             color: #fff;
@@ -586,7 +601,7 @@
         }
 
         .tag-norm {
-            background: rgba(255,255,255,0.03);
+            background: rgba(255, 255, 255, 0.03);
             color: var(--text-muted);
             border: 1px solid var(--border-structural);
         }
@@ -713,8 +728,15 @@
         }
 
         @keyframes paneSlide {
-            from { opacity: 0; transform: translateX(8px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .inspector-header {
@@ -885,15 +907,22 @@
             padding: 9px 16px;
             border-radius: 6px;
             font-size: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
             display: none;
             z-index: 1000;
             animation: toastIn 0.2s var(--ease-out-expo);
         }
 
         @keyframes toastIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .empty-placeholder {
@@ -904,16 +933,23 @@
         }
 
         @media (max-width: 1024px) {
-            .ledger-split.has-inspector { grid-template-columns: 1fr; }
-            .telemetry-strip { display: none; }
+            .ledger-split.has-inspector {
+                grid-template-columns: 1fr;
+            }
+
+            .telemetry-strip {
+                display: none;
+            }
         }
     </style>
 </head>
+
 <body>
     <header>
         <div class="identity-lockup">
             <div class="sys-mark">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                 </svg>
             </div>
@@ -928,7 +964,9 @@
 
         <div class="telemetry-strip">
             <div class="telemetry-pill">
-                <span style="color: var(--text-muted); font-size: 10px; font-weight: 600; text-transform: uppercase;">System Memory</span>
+                <span
+                    style="color: var(--text-muted); font-size: 10px; font-weight: 600; text-transform: uppercase;">System
+                    Memory</span>
                 <div class="meter-mini">
                     <div class="meter-bar" id="memBar" style="width: 40%;"></div>
                 </div>
@@ -953,23 +991,35 @@
     </div>
 
     <!-- Elevation Alert Container (R2) -->
-    <div id="elevationPrompt" class="admin-warning-banner" style="display: none; background: rgba(245, 158, 11, 0.12); border-bottom: 1px solid var(--accent-amber-border); padding: 10px 24px; align-items: center; justify-content: space-between;">
+    <div id="elevationPrompt" class="admin-warning-banner"
+        style="display: none; background: rgba(245, 158, 11, 0.12); border-bottom: 1px solid var(--accent-amber-border); padding: 10px 24px; align-items: center; justify-content: space-between;">
         <div style="display: flex; align-items: center; gap: 10px; color: var(--accent-amber);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            <span style="font-size: 12px; font-weight: 500;">Administrator privileges required to control system processes and enforce EcoQoS.</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span style="font-size: 12px; font-weight: 500;">Administrator privileges required to control system
+                processes and enforce EcoQoS.</span>
         </div>
-        <button id="btnElevate" onclick="triggerElevation()" style="background: var(--accent-amber); color: #000; border: none; border-radius: 4px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer;">
+        <button id="btnElevate" onclick="triggerElevation()"
+            style="background: var(--accent-amber); color: #000; border: none; border-radius: 4px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer;">
             Relaunch as Administrator
         </button>
     </div>
 
     <!-- Background Update Notification (R3) -->
-    <div id="updateNotification" class="update-banner" style="display: none; background: rgba(56, 189, 248, 0.12); border-bottom: 1px solid var(--accent-sky-border); padding: 10px 24px; align-items: center; justify-content: space-between;">
+    <div id="updateNotification" class="update-banner"
+        style="display: none; background: rgba(56, 189, 248, 0.12); border-bottom: 1px solid var(--accent-sky-border); padding: 10px 24px; align-items: center; justify-content: space-between;">
         <div style="display: flex; align-items: center; gap: 10px; color: var(--accent-sky);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
             <span id="updateText" style="font-size: 12px; font-weight: 500;">EfficiencyHub update available!</span>
         </div>
-        <button id="btnApplyUpdate" onclick="applyUpdate()" style="background: var(--accent-sky); color: #000; border: none; border-radius: 4px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer;">
+        <button id="btnApplyUpdate" onclick="applyUpdate()"
+            style="background: var(--accent-sky); color: #000; border: none; border-radius: 4px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer;">
             Restart & Apply
         </button>
     </div>
@@ -979,11 +1029,13 @@
         <div class="cmd-panel">
             <div class="search-rail">
                 <div class="search-shell">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
-                    <input type="text" id="filterInput" class="search-field" placeholder="Filter by executable name or PID..." oninput="handleFilterChange()">
+                    <input type="text" id="filterInput" class="search-field"
+                        placeholder="Filter by executable name or PID..." oninput="handleFilterChange()">
                     <span class="kbd-hint">/</span>
                 </div>
 
@@ -1017,7 +1069,8 @@
                     </select>
                 </div>
                 <button class="btn-refresh-core" onclick="refreshCoreData()">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
                     </svg>
                     Refresh
@@ -1027,11 +1080,16 @@
 
         <!-- Custom Policy Enforcer Dock -->
         <div class="policy-dock">
-            <span style="color: var(--text-muted); font-size: 11px; font-weight: 600; text-transform: uppercase;">Register Policy:</span>
-            <input type="text" id="newRuleTarget" class="dock-input" placeholder="Enter process executable (e.g. spotify, notion, omen, steam)...">
+            <span
+                style="color: var(--text-muted); font-size: 11px; font-weight: 600; text-transform: uppercase;">Register
+                Policy:</span>
+            <input type="text" id="newRuleTarget" class="dock-input"
+                placeholder="Enter process executable (e.g. spotify, notion, omen, steam)...">
             <button class="btn-policy btn-policy-eff" onclick="registerPolicy('efficiency')">+ Enforce EcoQoS</button>
-            <button class="btn-policy btn-policy-kill" onclick="registerPolicy('auto_kill_on_close')">+ Auto-Kill on Close</button>
-            <button class="btn-policy btn-policy-ban" onclick="registerPolicy('ban_from_background')">+ Quarantine Spawn</button>
+            <button class="btn-policy btn-policy-kill" onclick="registerPolicy('auto_kill_on_close')">+ Auto-Kill on
+                Close</button>
+            <button class="btn-policy btn-policy-ban" onclick="registerPolicy('ban_from_background')">+ Quarantine
+                Spawn</button>
         </div>
 
         <!-- Main Ledger & Inspector Split View -->
@@ -1064,7 +1122,8 @@
                 <div class="inspector-header">
                     <div class="inspector-title" id="inspName">Process Inspector</div>
                     <button class="btn-close-inspector" onclick="closeInspector()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
                         </svg>
@@ -1119,8 +1178,10 @@
                     </div>
 
                     <div class="inspector-actions">
-                        <button class="btn-danger-wide" onclick="terminateSelected(false)">Terminate PID Instance</button>
-                        <button class="btn-danger-wide" style="background: rgba(244, 63, 94, 0.15);" onclick="terminateSelected(true)">Terminate Entire Process Tree</button>
+                        <button class="btn-danger-wide" onclick="terminateSelected(false)">Terminate PID
+                            Instance</button>
+                        <button class="btn-danger-wide" style="background: rgba(244, 63, 94, 0.15);"
+                            onclick="terminateSelected(true)">Terminate Entire Process Tree</button>
                     </div>
                 </div>
             </div>
@@ -1168,7 +1229,7 @@
                     document.getElementById('memBar').style.width = `${data.percentUsed}%`;
                     document.getElementById('memText').innerText = `${data.usedGb} / ${data.totalGb} GB (${data.percentUsed}%)`;
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
 
         async function refreshCoreData() {
@@ -1348,10 +1409,10 @@
             let filtered = itemsToDisplay.filter(p => {
                 if (!p) return false;
                 const match = (p.name && p.name.toLowerCase().includes(query)) ||
-                              (p.rawName && p.rawName.toLowerCase().includes(query)) ||
-                              (p.serviceDescription && p.serviceDescription.toLowerCase().includes(query)) ||
-                              (p.baseName && p.baseName.toLowerCase().includes(query)) ||
-                              (p.pid !== '-' && String(p.pid).includes(query));
+                    (p.rawName && p.rawName.toLowerCase().includes(query)) ||
+                    (p.serviceDescription && p.serviceDescription.toLowerCase().includes(query)) ||
+                    (p.baseName && p.baseName.toLowerCase().includes(query)) ||
+                    (p.pid !== '-' && String(p.pid).includes(query));
                 if (!match) return false;
 
                 if (activeScope === 'efficiency') return p.isEfficiency;
@@ -1564,7 +1625,7 @@
                 notify(`${targetName} is a protected core app. Process-level kill is restricted to prevent crash loops.`);
                 return;
             }
-            
+
             let willEnable = false;
             if (mode === 'efficiency') {
                 willEnable = inspectedProc.permanentMode !== 'efficiency';
@@ -1793,7 +1854,7 @@
                     }
                     if (badge) badge.innerHTML = '<div class="pulsing-node" style="background: var(--accent-amber);"></div> UNPRIVILEGED';
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
 
         async function triggerElevation() {
@@ -1868,7 +1929,7 @@
                     if (txt) txt.textContent = `New release v${data.latestVersion} available!`;
                     banner.style.display = 'flex';
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
 
         async function applyUpdate() {
@@ -1895,4 +1956,5 @@
         checkForUpdates();
     </script>
 </body>
+
 </html>
