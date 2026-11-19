@@ -1,0 +1,54 @@
+{
+  "efficiency": [
+    "omencommandcenterbackground",
+    "omeninstallmonitor",
+    "googleupdate",
+    "googleupdater",
+    "googlecrashhandler",
+    "microsoftedgeupdate",
+    "edgeupdate",
+    "copilotupdate",
+    "braveupdate",
+    "bravecrashhandler",
+    "adobeupdate",
+    "adobegcclient",
+    "agcinvoker",
+    "agsservice",
+    "riotclient",
+    "hpcommrecovery",
+    "hpapphelper",
+    "hpnetworkcap",
+    "hpsysinfocap",
+    "hptouchpoint",
+    "hpdiags",
+    "updater_launcher",
+    "crashhandler",
+    "updater",
+    "officeclicktorun",
+    "xtuservice",
+    "discord",
+    "nvdisplay.container",
+    "nvcontainer",
+    "antigravity ide",
+    "powershell"
+  ],
+  "normal": [
+    "chrome",
+    "brave",
+    "code",
+    "hp.omen.omencommandcenter",
+    "svchost"
+  ],
+  "auto_kill_on_close": [
+    "discord",
+    "notion",
+    "omeninstallmonitor",
+    "claude",
+    "cowork-svc",
+    "chatgpt"
+  ],
+  "ban_from_background": [
+    "phoneexperiencehost",
+    "crossdeviceservice"
+  ]
+}

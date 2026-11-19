@@ -1,0 +1,28 @@
+{
+  "name": "efficiencyhub",
+  "version": "2.4.0",
+  "description": "Public, production-ready open-source Windows utility for hardware power throttling, instant auto-kill, and process lifecycle governance.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests/run_all_e2e.js",
+    "build": "powershell -ExecutionPolicy Bypass -Command \"& 'C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe' /target:winexe /out:AutoEfficiencyWatcher.exe AutoEfficiencyWatcher.cs\"",
+    "build:watcher": "powershell -ExecutionPolicy Bypass -Command \"& 'C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe' /target:winexe /out:AutoEfficiencyWatcher.exe AutoEfficiencyWatcher.cs\"",
+    "build:installer": "powershell -ExecutionPolicy Bypass -File build_installer.ps1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smitlad01/Efficiencyhub.git"
+  },
+  "keywords": [
+    "windows",
+    "process-manager",
+    "ecoqos",
+    "efficiency-mode",
+    "auto-kill",
+    "system-governor",
+    "open-source"
+  ],
+  "author": "Smit Lad",
+  "license": "MIT"
+}

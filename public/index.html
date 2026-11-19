@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINETIC // OS SysGovernor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --surface-ground: #07080b;
+            --surface-panel: #0e1117;
+            --surface-card: #131720;
+            --surface-card-hover: #191e2b;
+            --surface-highlight: #212838;
+            --border-faint: rgba(255, 255, 255, 0.04);
+            --border-structural: #1e2433;
+            --border-focus: #3b82f6;
+            
+            --text-heading: #f8fafc;
+            --text-body: #94a3b8;
+            --text-muted: #526077;
+            --text-ghost: #384252;
+            
+            --accent-emerald: #10b981;
+            --accent-emerald-faint: rgba(16, 185, 129, 0.08);
+            --accent-emerald-border: rgba(16, 185, 129, 0.22);
+            
+            --accent-sky: #38bdf8;
+            --accent-sky-faint: rgba(56, 189, 248, 0.08);
+            --accent-sky-border: rgba(56, 189, 248, 0.2);
+
+            --accent-amber: #f59e0b;
+            --accent-amber-faint: rgba(245, 158, 11, 0.08);
+            --accent-amber-border: rgba(245, 158, 11, 0.22);
+
+            --accent-rose: #f43f5e;
+            --accent-rose-faint: rgba(244, 63, 94, 0.08);
+            --accent-rose-border: rgba(244, 63, 94, 0.22);
+
+            --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
+            --font-mono: 'Geist Mono', Consolas, 'SF Mono', monospace;
+
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--surface-ground);
+            color: var(--text-body);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* 1. Header & Live Telemetry Ribbon */
+        header {
+            background: var(--surface-panel);
+            border-bottom: 1px solid var(--border-structural);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .identity-lockup {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sys-mark {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(145deg, #111827, #030712);
+            border: 1px solid var(--border-structural);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-emerald);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+
+        .title-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-primary {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-heading);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-primary span.tag-ver {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-muted);
+            background: var(--surface-ground);
+            border: 1px solid var(--border-structural);
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+
+        .title-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+
+        .telemetry-strip {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .telemetry-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            background: var(--surface-ground);
+            border: 1px solid var(--border-structural);
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .meter-mini {
+            width: 70px;
+            height: 4px;
+            background: var(--surface-highlight);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .meter-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-sky), var(--accent-emerald));
+            border-radius: 2px;
+            transition: width 0.4s var(--ease-out-expo);
+        }
+
+        .daemon-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: var(--accent-emerald);
+            background: var(--accent-emerald-faint);
+            border: 1px solid var(--accent-emerald-border);
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        .pulsing-node {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-emerald);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--accent-emerald);
+            animation: nodePulse 2.4s infinite;
+        }
+
+        @keyframes nodePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* 2. Main Workbench Layout */
+        .workbench {
+            flex: 1;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* 3. Control Command Bar */
+        .cmd-panel {
+            background: var(--surface-panel);
+            border: 1px solid var(--border-structural);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .search-rail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .search-shell {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-shell svg {
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-field {
+            width: 100%;
+            background: var(--surface-ground);
+            border: 1px solid var(--border-structural);
+            border-radius: 6px;
+            padding: 7px 32px 7px 34px;
+            color: var(--text-heading);
+            font-family: var(--font-sans);
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .search-field:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 1px var(--border-focus);
+        }
+
+        .kbd-hint {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-muted);
+            background: var(--surface-card);
+            border: 1px solid var(--border-structural);
+            padding: 1px 5px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .filter-matrix {
+            display: flex;
+            background: var(--surface-ground);
+            border: 1px solid var(--border-structural);
+            padding: 2px;
+            border-radius: 6px;
+            gap: 2px;
+        }
+
+        .matrix-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .matrix-tab:hover {
+            color: var(--text-heading);
+        }
+
+        .matrix-tab.active {
+            background: var(--surface-card);
+            color: var(--text-heading);
+            font-weight: 600;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .tab-counter {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.04);
+            padding: 1px 5px;
+            border-radius: 3px;
+        }
+
+        .sort-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--surface-ground);
+            border: 1px solid var(--border-structural);
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        .sort-control select {
+            background: transparent;
+            border: none;
+            color: var(--text-heading);
+            font-size: 11px;
+            font-family: var(--font-sans);
+            font-weight: 500;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .sort-control select option {
+            background: var(--surface-panel);
+            color: var(--text-heading);
+        }
+
+        .btn-refresh-core {
+            background: var(--surface-ground);
+            border: 1px solid var(--border-structural);
+            color: var(--text-muted);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+
+        .btn-refresh-core:hover {
+            color: var(--text-heading);
+            border-color: var(--text-muted);
+        }
+
+        /* 4. Quick Execution & Custom Policy Bar */
+        .policy-dock {
+            background: var(--surface-panel);
+            border: 1px solid var(--border-structural);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .dock-input {
+            flex: 1;
+            background: var(--surface-ground);
+            border: 1px solid var(--border-structural);
+            border-radius: 6px;
+            padding: 6px 12px;
+            color: var(--text-heading);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            outline: none;
+        }
+
+        .dock-input:focus {
+            border-color: var(--border-focus);
+        }
+
+        .btn-policy {
+            background: transparent;
+            border: 1px solid transparent;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .btn-policy-eff {
+            background: var(--accent-emerald-faint);
+            color: var(--accent-emerald);
+            border-color: var(--accent-emerald-border);
+        }
+        .btn-policy-eff:hover {
+            background: var(--accent-emerald);
+            color: #030712;
+            font-weight: 600;
+        }
+
+        .btn-policy-kill {
+            background: var(--accent-amber-faint);
+            color: var(--accent-amber);
+            border-color: var(--accent-amber-border);
+        }
+        .btn-policy-kill:hover {
+            background: var(--accent-amber);
+            color: #030712;
+            font-weight: 600;
+        }
+
+        .btn-policy-ban {
+            background: var(--accent-rose-faint);
+            color: var(--accent-rose);
+            border-color: var(--accent-rose-border);
+        }
+        .btn-policy-ban:hover {
+            background: var(--accent-rose);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* 5. Split Main Ledger View */
+        .ledger-split {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            transition: grid-template-columns 0.3s var(--ease-out-expo);
+        }
+
+        .ledger-split.has-inspector {
+            grid-template-columns: 1fr 380px;
+        }
+
+        .table-vault {
+            background: var(--surface-panel);
+            border: 1px solid var(--border-structural);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: calc(100vh - 270px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        thead th {
+            background: var(--surface-card);
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 8px 14px;
+            border-bottom: 1px solid var(--border-structural);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        thead th:hover {
+            color: var(--text-heading);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border-faint);
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        tbody tr:hover {
+            background: var(--surface-card-hover);
+        }
+
+        tbody tr.selected-row {
+            background: rgba(56, 189, 248, 0.06);
+            border-left: 2px solid var(--accent-sky);
+        }
+
+        td {
+            padding: 9px 14px;
+            vertical-align: middle;
+            color: var(--text-body);
+        }
+
+        .cell-entity {
+            font-weight: 500;
+            color: var(--text-heading);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-glyph {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .status-glyph.active-eff {
+            background: var(--accent-emerald);
+            box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+        }
+
+        .status-glyph.active-norm {
+            background: var(--accent-sky);
+            box-shadow: 0 0 6px rgba(56, 189, 248, 0.5);
+        }
+
+        .status-glyph.active-default {
+            background: var(--text-ghost);
+        }
+
+        .tabular-val {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .mem-meter-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mem-visual-track {
+            flex: 1;
+            max-width: 80px;
+            height: 3px;
+            background: var(--surface-highlight);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .mem-visual-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            border-radius: 2px;
+        }
+
+        .tag-capsule {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-family: var(--font-mono);
+            font-weight: 500;
+            padding: 2px 7px;
+            border-radius: 4px;
+            line-height: 1.2;
+        }
+
+        .tag-eff {
+            background: var(--accent-emerald-faint);
+            color: var(--accent-emerald);
+            border: 1px solid var(--accent-emerald-border);
+        }
+
+        .tag-norm {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-muted);
+            border: 1px solid var(--border-structural);
+        }
+
+        .tag-autokill {
+            background: var(--accent-amber-faint);
+            color: var(--accent-amber);
+            border: 1px solid var(--accent-amber-border);
+        }
+
+        .tag-banned {
+            background: var(--accent-rose-faint);
+            color: var(--accent-rose);
+            border: 1px solid var(--accent-rose-border);
+        }
+
+        .tag-service {
+            background: rgba(147, 51, 234, 0.12);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            font-size: 9px;
+            padding: 1px 6px;
+        }
+
+        .tag-running {
+            color: var(--accent-emerald);
+            background: var(--accent-emerald-faint);
+            border-color: var(--accent-emerald-border);
+        }
+
+        .tag-stopped {
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .entity-name-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .entity-title-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cell-subtext {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 340px;
+        }
+
+        .action-cluster {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-act {
+            background: var(--surface-ground);
+            border: 1px solid var(--border-structural);
+            color: var(--text-muted);
+            font-size: 11px;
+            font-family: var(--font-sans);
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.12s;
+        }
+
+        .btn-act:hover {
+            color: var(--text-heading);
+            border-color: var(--text-muted);
+        }
+
+        .btn-act.is-active-eff {
+            background: var(--accent-emerald-faint);
+            color: var(--accent-emerald);
+            border-color: var(--accent-emerald-border);
+            font-weight: 600;
+        }
+
+        .btn-act.is-active-autokill {
+            background: var(--accent-amber-faint);
+            color: var(--accent-amber);
+            border-color: var(--accent-amber-border);
+        }
+
+        .btn-act.is-active-banned {
+            background: var(--accent-rose-faint);
+            color: var(--accent-rose);
+            border-color: var(--accent-rose-border);
+        }
+
+        .btn-act-danger:hover {
+            background: var(--accent-rose-faint);
+            color: var(--accent-rose);
+            border-color: var(--accent-rose-border);
+        }
+
+        .btn-act:disabled,
+        .btn-act[disabled] {
+            opacity: 0.35;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* 6. Precision Process Inspector Pane */
+        .inspector-pane {
+            background: var(--surface-panel);
+            border: 1px solid var(--border-structural);
+            border-radius: 8px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: paneSlide 0.2s var(--ease-out-expo);
+        }
+
+        @keyframes paneSlide {
+            from { opacity: 0; transform: translateX(8px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .inspector-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-structural);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface-card);
+        }
+
+        .inspector-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        .btn-close-inspector {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+        }
+
+        .btn-close-inspector:hover {
+            color: var(--text-heading);
+        }
+
+        .inspector-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+        }
+
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .spec-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+
+        .spec-val {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-heading);
+            word-break: break-all;
+        }
+
+        .inspector-policy-toggle-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-structural);
+        }
+
+        .toggle-switch-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border-structural);
+            border-radius: 6px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: border-color 0.15s;
+        }
+
+        .toggle-switch-card:hover {
+            border-color: var(--text-muted);
+        }
+
+        .toggle-info h4 {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-heading);
+        }
+
+        .toggle-info p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .switch-control {
+            width: 32px;
+            height: 18px;
+            background: var(--surface-highlight);
+            border-radius: 9px;
+            position: relative;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .switch-control::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.2s var(--ease-out-expo);
+        }
+
+        .switch-control.is-on {
+            background: var(--accent-emerald);
+        }
+
+        .switch-control.is-on.switch-amber {
+            background: var(--accent-amber);
+        }
+
+        .switch-control.is-on.switch-rose {
+            background: var(--accent-rose);
+        }
+
+        .switch-control.is-on::after {
+            transform: translateX(14px);
+        }
+
+        .inspector-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-structural);
+        }
+
+        .btn-danger-wide {
+            width: 100%;
+            background: var(--accent-rose-faint);
+            border: 1px solid var(--accent-rose-border);
+            color: var(--accent-rose);
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-danger-wide:hover {
+            background: var(--accent-rose);
+            color: #fff;
+        }
+
+        /* 7. Toast Alerts */
+        .toast-strip {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-structural);
+            color: var(--text-heading);
+            padding: 9px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            display: none;
+            z-index: 1000;
+            animation: toastIn 0.2s var(--ease-out-expo);
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .empty-placeholder {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        @media (max-width: 1024px) {
+            .ledger-split.has-inspector { grid-template-columns: 1fr; }
+            .telemetry-strip { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="identity-lockup">
+            <div class="sys-mark">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            <div class="title-block">
+                <div class="title-primary">
+                    KINETIC // SYSGOVERNOR
+                    <span class="tag-ver">v2.4 Kernel-Opt</span>
+                </div>
+                <div class="title-sub">Hardware Power Throttling & Process Lifecycle Controller</div>
+            </div>
+        </div>
+
+        <div class="telemetry-strip">
+            <div class="telemetry-pill">
+                <span style="color: var(--text-muted); font-size: 10px; font-weight: 600; text-transform: uppercase;">System Memory</span>
+                <div class="meter-mini">
+                    <div class="meter-bar" id="memBar" style="width: 40%;"></div>
+                </div>
+                <span class="tabular-val" id="memText" style="color: var(--text-heading);">9.4 / 23.6 GB (40%)</span>
+            </div>
+            <div class="daemon-badge">
+                <div class="pulsing-node"></div>
+                DAEMON ELEVATED
+            </div>
+        </div>
+    </header>
+
+    <!-- Elevation Alert Container (R2) -->
+    <div id="elevationPrompt" class="admin-warning-banner" style="display: none; background: rgba(245, 158, 11, 0.12); border-bottom: 1px solid var(--accent-amber-border); padding: 10px 24px; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 10px; color: var(--accent-amber);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <span style="font-size: 12px; font-weight: 500;">Administrator privileges required to control system processes and enforce EcoQoS.</span>
+        </div>
+        <button id="btnElevate" onclick="triggerElevation()" style="background: var(--accent-amber); color: #000; border: none; border-radius: 4px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer;">
+            Relaunch as Administrator
+        </button>
+    </div>
+
+    <!-- Background Update Notification (R3) -->
+    <div id="updateNotification" class="update-banner" style="display: none; background: rgba(56, 189, 248, 0.12); border-bottom: 1px solid var(--accent-sky-border); padding: 10px 24px; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 10px; color: var(--accent-sky);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span id="updateText" style="font-size: 12px; font-weight: 500;">EfficiencyHub update available!</span>
+        </div>
+        <button id="btnApplyUpdate" onclick="applyUpdate()" style="background: var(--accent-sky); color: #000; border: none; border-radius: 4px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer;">
+            Restart & Apply
+        </button>
+    </div>
+
+    <div class="workbench">
+        <!-- Command & Filter Bar -->
+        <div class="cmd-panel">
+            <div class="search-rail">
+                <div class="search-shell">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="filterInput" class="search-field" placeholder="Filter by executable name or PID..." oninput="handleFilterChange()">
+                    <span class="kbd-hint">/</span>
+                </div>
+
+                <div class="filter-matrix">
+                    <button class="matrix-tab active" data-filter="all" onclick="selectFilter('all')">
+                        All <span class="tab-counter" id="cntAll">0</span>
+                    </button>
+                    <button class="matrix-tab" data-filter="efficiency" onclick="selectFilter('efficiency')">
+                        EcoQoS <span class="tab-counter" id="cntEff">0</span>
+                    </button>
+                    <button class="matrix-tab" data-filter="services" onclick="selectFilter('services')">
+                        Services <span class="tab-counter" id="cntServices">0</span>
+                    </button>
+                    <button class="matrix-tab" data-filter="autokill" onclick="selectFilter('autokill')">
+                        Auto-Kill <span class="tab-counter" id="cntAutoKill">0</span>
+                    </button>
+                    <button class="matrix-tab" data-filter="banned" onclick="selectFilter('banned')">
+                        Quarantined <span class="tab-counter" id="cntBanned">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="sort-control">
+                    <span>Rank by:</span>
+                    <select id="sortSelect" onchange="handleSortChange()">
+                        <option value="ram_desc">Memory Footprint</option>
+                        <option value="cpu_desc">CPU Clock Time</option>
+                        <option value="consuming_desc">Composite Load</option>
+                        <option value="name_asc">Alphabetical (A - Z)</option>
+                    </select>
+                </div>
+                <button class="btn-refresh-core" onclick="refreshCoreData()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Custom Policy Enforcer Dock -->
+        <div class="policy-dock">
+            <span style="color: var(--text-muted); font-size: 11px; font-weight: 600; text-transform: uppercase;">Register Policy:</span>
+            <input type="text" id="newRuleTarget" class="dock-input" placeholder="Enter process executable (e.g. spotify, notion, omen, steam)...">
+            <button class="btn-policy btn-policy-eff" onclick="registerPolicy('efficiency')">+ Enforce EcoQoS</button>
+            <button class="btn-policy btn-policy-kill" onclick="registerPolicy('auto_kill_on_close')">+ Auto-Kill on Close</button>
+            <button class="btn-policy btn-policy-ban" onclick="registerPolicy('ban_from_background')">+ Quarantine Spawn</button>
+        </div>
+
+        <!-- Main Ledger & Inspector Split View -->
+        <div class="ledger-split" id="ledgerSplit">
+            <div class="table-vault">
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="columnSort('name')">Entity</th>
+                                <th onclick="columnSort('pid')">PID</th>
+                                <th onclick="columnSort('ram')">Working Set</th>
+                                <th onclick="columnSort('cpu')">CPU Runtime</th>
+                                <th>OS Priority</th>
+                                <th>Governor Policy</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledgerBody">
+                            <tr>
+                                <td colspan="7" class="empty-placeholder">Synchronizing hardware process table...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Precision Inspector Slide-in -->
+            <div class="inspector-pane" id="inspectorPane">
+                <div class="inspector-header">
+                    <div class="inspector-title" id="inspName">Process Inspector</div>
+                    <button class="btn-close-inspector" onclick="closeInspector()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="inspector-body">
+                    <div class="spec-item">
+                        <div class="spec-label">Process Identifier</div>
+                        <div class="spec-val" id="inspPid">-</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Allocated Working Set</div>
+                        <div class="spec-val" id="inspRam">-</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Accumulated Compute Time</div>
+                        <div class="spec-val" id="inspCpu">-</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Process Scheduling Class</div>
+                        <div class="spec-val" id="inspPrio">-</div>
+                    </div>
+                    <div class="spec-item" id="inspServiceRow" style="display: none;">
+                        <div class="spec-label">Linked Windows Service</div>
+                        <div class="spec-val" id="inspService" style="color: #c084fc;">-</div>
+                    </div>
+
+                    <div class="inspector-policy-toggle-group">
+                        <div class="toggle-switch-card" onclick="toggleInspectorPolicy('efficiency')">
+                            <div class="toggle-info">
+                                <h4>Efficiency Mode (EcoQoS)</h4>
+                                <p>Clamp CPU cores to energy-efficient frequency & Idle priority</p>
+                            </div>
+                            <div class="switch-control" id="swEff"></div>
+                        </div>
+
+                        <div class="toggle-switch-card" onclick="toggleInspectorPolicy('auto_kill_on_close')">
+                            <div class="toggle-info">
+                                <h4>Auto-Kill on Window Close</h4>
+                                <p>Terminate background tray workers when main window is closed</p>
+                            </div>
+                            <div class="switch-control switch-amber" id="swAutoKill"></div>
+                        </div>
+
+                        <div class="toggle-switch-card" onclick="toggleInspectorPolicy('ban_from_background')">
+                            <div class="toggle-info">
+                                <h4>Quarantine Background Spawns</h4>
+                                <p>Kill process immediately if detected without an active session</p>
+                            </div>
+                            <div class="switch-control switch-rose" id="swBanned"></div>
+                        </div>
+                    </div>
+
+                    <div class="inspector-actions">
+                        <button class="btn-danger-wide" onclick="terminateSelected(false)">Terminate PID Instance</button>
+                        <button class="btn-danger-wide" style="background: rgba(244, 63, 94, 0.15);" onclick="terminateSelected(true)">Terminate Entire Process Tree</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastAlert" class="toast-strip"></div>
+
+    <script>
+        let liveProcesses = [];
+        let systemRules = { efficiency: [], normal: [], auto_kill_on_close: [], ban_from_background: [] };
+        let activeScope = 'all';
+        let activeSortKey = 'ram_desc';
+        let inspectedProc = null;
+
+        function notify(msg) {
+            const el = document.getElementById('toastAlert');
+            el.innerText = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 2400);
+        }
+
+        async function fetchSystemMemory() {
+            try {
+                const res = await fetch('/api/system');
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('memBar').style.width = `${data.percentUsed}%`;
+                    document.getElementById('memText').innerText = `${data.usedGb} / ${data.totalGb} GB (${data.percentUsed}%)`;
+                }
+            } catch (e) {}
+        }
+
+        async function refreshCoreData() {
+            try {
+                const [pRes, rRes] = await Promise.all([
+                    fetch('/api/processes'),
+                    fetch('/api/rules')
+                ]);
+
+                liveProcesses = await pRes.json();
+                systemRules = await rRes.json();
+
+                updateKPIs();
+                renderLedger();
+                if (inspectedProc) {
+                    const refreshed = liveProcesses.find(p => p.pid === inspectedProc.pid);
+                    if (refreshed) inspectProcess(refreshed);
+                }
+            } catch (err) {
+                console.error('Core sync error:', err);
+            }
+        }
+
+        function updateKPIs() {
+            const effProcs = (liveProcesses || []).filter(p => p && p.isEfficiency).length;
+            const servicesProcs = (liveProcesses || []).filter(p => p && p.isService).length;
+            const uniqueAutoKill = new Set(((systemRules && systemRules.auto_kill_on_close) || []).map(r => (r || '').toLowerCase().replace(/\.exe$/i, '').trim()).filter(Boolean)).size;
+            const uniqueBanned = new Set(((systemRules && systemRules.ban_from_background) || []).map(r => (r || '').toLowerCase().replace(/\.exe$/i, '').trim()).filter(Boolean)).size;
+
+            const setBadge = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
+
+            const totalProcs = (liveProcesses || []).filter(Boolean).length;
+            setBadge('cntAll', totalProcs);
+            setBadge('cntEff', effProcs);
+            setBadge('cntServices', servicesProcs);
+            setBadge('cntAutoKill', uniqueAutoKill);
+            setBadge('cntBanned', uniqueBanned);
+
+            // Legacy KPI element compatibility guards
+            setBadge('kpiTotal', totalProcs);
+            setBadge('kpiEff', effProcs);
+            setBadge('kpiAutoKill', uniqueAutoKill);
+            setBadge('kpiBanned', uniqueBanned);
+        }
+
+        function selectFilter(scope) {
+            activeScope = scope;
+            document.querySelectorAll('.matrix-tab').forEach(t => {
+                t.classList.toggle('active', t.getAttribute('data-filter') === scope);
+            });
+            renderLedger();
+        }
+
+        function handleFilterChange() {
+            renderLedger();
+        }
+
+        function handleSortChange() {
+            activeSortKey = document.getElementById('sortSelect').value;
+            renderLedger();
+        }
+
+        function columnSort(key) {
+            if (key === 'ram') activeSortKey = activeSortKey === 'ram_desc' ? 'ram_asc' : 'ram_desc';
+            if (key === 'cpu') activeSortKey = activeSortKey === 'cpu_desc' ? 'cpu_asc' : 'cpu_desc';
+            if (key === 'name') activeSortKey = activeSortKey === 'name_asc' ? 'name_desc' : 'name_asc';
+            if (key === 'pid') activeSortKey = activeSortKey === 'pid_asc' ? 'pid_desc' : 'pid_asc';
+            document.getElementById('sortSelect').value = activeSortKey;
+            renderLedger();
+        }
+
+        function sortDataSet(items) {
+            return items.sort((a, b) => {
+                if (activeSortKey === 'ram_desc') return (b.ramMb || 0) - (a.ramMb || 0);
+                if (activeSortKey === 'ram_asc') return (a.ramMb || 0) - (b.ramMb || 0);
+                if (activeSortKey === 'cpu_desc') return (b.cpuSec || 0) - (a.cpuSec || 0);
+                if (activeSortKey === 'cpu_asc') return (a.cpuSec || 0) - (b.cpuSec || 0);
+                if (activeSortKey === 'consuming_desc') {
+                    const scoreA = (a.ramMb || 0) + (a.cpuSec || 0) * 1.5;
+                    const scoreB = (b.ramMb || 0) + (b.cpuSec || 0) * 1.5;
+                    return scoreB - scoreA;
+                }
+                if (activeSortKey === 'name_asc') return (a.name || '').localeCompare(b.name || '');
+                if (activeSortKey === 'name_desc') return (b.name || '').localeCompare(a.name || '');
+                if (activeSortKey === 'pid_asc') return (Number.isFinite(Number(a.pid)) ? Number(a.pid) : 999999) - (Number.isFinite(Number(b.pid)) ? Number(b.pid) : 999999);
+                if (activeSortKey === 'pid_desc') return (Number.isFinite(Number(b.pid)) ? Number(b.pid) : -1) - (Number.isFinite(Number(a.pid)) ? Number(a.pid) : -1);
+                return 0;
+            });
+        }
+
+        function renderLedger() {
+            const query = (document.getElementById('filterInput').value || '').trim().toLowerCase();
+            const tbody = document.getElementById('ledgerBody');
+
+            // Start with live processes
+            let itemsToDisplay = [...(liveProcesses || [])];
+
+            // Synthesize persistent rows for configured rules when viewing Auto-Kill or Quarantined tabs
+            if (activeScope === 'autokill') {
+                const rules = (systemRules && systemRules.auto_kill_on_close) || [];
+                const seen = new Set();
+                for (const rule of rules) {
+                    const ruleNorm = (rule || '').toLowerCase().trim().replace(/\.exe$/i, '');
+                    if (!ruleNorm || seen.has(ruleNorm)) continue;
+                    seen.add(ruleNorm);
+                    const isRunning = (liveProcesses || []).some(p => {
+                        if (!p) return false;
+                        const b = (p.baseName || '').toLowerCase().trim().replace(/\.exe$/i, '');
+                        const r = (p.rawName || '').toLowerCase().trim().replace(/\.exe$/i, '');
+                        if (b === ruleNorm || r === ruleNorm) return true;
+                        if (b && b.length >= 4 && ruleNorm.length >= 4 && (b.includes(ruleNorm) || ruleNorm.includes(b))) return true;
+                        return false;
+                    });
+                    if (!isRunning) {
+                        itemsToDisplay.push({
+                            pid: '-',
+                            name: `${ruleNorm}.exe`,
+                            rawName: `${ruleNorm}.exe`,
+                            baseName: ruleNorm,
+                            serviceDescription: '',
+                            isService: false,
+                            hasWindow: false,
+                            ramMb: 0,
+                            cpuSec: 0,
+                            priority: '-',
+                            isEfficiency: false,
+                            permanentMode: 'default',
+                            isAutoKillOnClose: true,
+                            isBannedFromBackground: false,
+                            isRunning: false,
+                            isSynthesized: true
+                        });
+                    }
+                }
+            } else if (activeScope === 'banned') {
+                const rules = (systemRules && systemRules.ban_from_background) || [];
+                const seen = new Set();
+                for (const rule of rules) {
+                    const ruleNorm = (rule || '').toLowerCase().trim().replace(/\.exe$/i, '');
+                    if (!ruleNorm || seen.has(ruleNorm)) continue;
+                    seen.add(ruleNorm);
+                    const isRunning = (liveProcesses || []).some(p => {
+                        if (!p) return false;
+                        const b = (p.baseName || '').toLowerCase().trim().replace(/\.exe$/i, '');
+                        const r = (p.rawName || '').toLowerCase().trim().replace(/\.exe$/i, '');
+                        if (b === ruleNorm || r === ruleNorm) return true;
+                        if (b && b.length >= 4 && ruleNorm.length >= 4 && (b.includes(ruleNorm) || ruleNorm.includes(b))) return true;
+                        return false;
+                    });
+                    if (!isRunning) {
+                        itemsToDisplay.push({
+                            pid: '-',
+                            name: `${ruleNorm}.exe`,
+                            rawName: `${ruleNorm}.exe`,
+                            baseName: ruleNorm,
+                            serviceDescription: '',
+                            isService: false,
+                            hasWindow: false,
+                            ramMb: 0,
+                            cpuSec: 0,
+                            priority: '-',
+                            isEfficiency: false,
+                            permanentMode: 'default',
+                            isAutoKillOnClose: false,
+                            isBannedFromBackground: true,
+                            isRunning: false,
+                            isSynthesized: true
+                        });
+                    }
+                }
+            }
+
+            // Filter by search query and active tab
+            let filtered = itemsToDisplay.filter(p => {
+                if (!p) return false;
+                const match = (p.name && p.name.toLowerCase().includes(query)) ||
+                              (p.rawName && p.rawName.toLowerCase().includes(query)) ||
+                              (p.serviceDescription && p.serviceDescription.toLowerCase().includes(query)) ||
+                              (p.baseName && p.baseName.toLowerCase().includes(query)) ||
+                              (p.pid !== '-' && String(p.pid).includes(query));
+                if (!match) return false;
+
+                if (activeScope === 'efficiency') return p.isEfficiency;
+                if (activeScope === 'services') return p.isService;
+                if (activeScope === 'autokill') return p.isAutoKillOnClose;
+                if (activeScope === 'banned') return p.isBannedFromBackground;
+                return true;
+            });
+
+            filtered = sortDataSet(filtered);
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-placeholder">No matching system entities found.</td></tr>`;
+                return;
+            }
+
+            const peakRam = Math.max(...(liveProcesses || []).map(p => (p && p.ramMb) || 1), 64);
+
+            tbody.innerHTML = filtered.map(p => {
+                const isRunning = p.isRunning !== false;
+                const isSelected = inspectedProc && inspectedProc.pid === p.pid && isRunning;
+                const rowClass = isSelected ? 'selected-row' : '';
+                const glyphClass = !isRunning ? 'active-default' : (p.permanentMode === 'efficiency' ? 'active-eff' : (p.permanentMode === 'normal' ? 'active-norm' : 'active-default'));
+
+                let policyCaps = [];
+                if (isRunning) {
+                    policyCaps.push(`<span class="tag-capsule tag-running">RUNNING</span>`);
+                } else {
+                    policyCaps.push(`<span class="tag-capsule tag-stopped">STOPPED</span>`);
+                }
+
+                if (p.permanentMode === 'efficiency') policyCaps.push(`<span class="tag-capsule tag-eff">ECO-QOS</span>`);
+                else if (p.permanentMode === 'normal') policyCaps.push(`<span class="tag-capsule tag-norm">FULL-CLOCK</span>`);
+
+                if (p.isAutoKillOnClose) policyCaps.push(`<span class="tag-capsule tag-autokill">AUTO-KILL</span>`);
+                if (p.isBannedFromBackground) policyCaps.push(`<span class="tag-capsule tag-banned">QUARANTINE</span>`);
+
+                const policyString = policyCaps.join(' ');
+                const base = p.baseName;
+                const safeName = (p.name || '').replace(/'/g, "\\'");
+                const safeBase = (p.baseName || '').replace(/'/g, "\\'");
+                const serviceTag = p.isService ? `<span class="tag-capsule tag-service">SERVICE</span>` : '';
+                const subDesc = p.serviceDescription ? `<div class="cell-subtext" title="${p.serviceDescription}">${p.serviceDescription}</div>` : '';
+
+                // Safe RAM cell representation
+                const memRatio = isRunning ? Math.min(100, Math.round(((p.ramMb || 0) / peakRam) * 100)) : 0;
+                const ramCell = isRunning ? `
+                    <div class="mem-meter-cell">
+                        <span class="tabular-val" style="color: var(--text-heading); font-weight: 500;">${((p.ramMb || 0)).toFixed(1)} MB</span>
+                        <div class="mem-visual-track">
+                            <div class="mem-visual-fill" style="width: ${memRatio}%;"></div>
+                        </div>
+                    </div>
+                ` : `
+                    <div class="mem-meter-cell">
+                        <span class="tabular-val" style="color: var(--text-muted); font-weight: 500;">-</span>
+                    </div>
+                `;
+
+                const cpuDisplay = isRunning ? `${(p.cpuSec || 0).toFixed(1)}s` : '-';
+                const prioDisplay = isRunning ? p.priority : '-';
+
+                // Action cluster controls
+                let actionControls = '';
+                if (activeScope === 'banned') {
+                    actionControls += `
+                        <button class="btn-act ${p.isBannedFromBackground ? 'is-active-banned' : ''}" 
+                                onclick="executePolicyToggle('${safeBase}', 'ban_from_background', ${!p.isBannedFromBackground})" 
+                                title="Toggle Background Quarantine">
+                            Quarantine
+                        </button>
+                        <button class="btn-act ${p.isAutoKillOnClose ? 'is-active-autokill' : ''}" 
+                                onclick="executePolicyToggle('${safeBase}', 'auto_kill_on_close', ${!p.isAutoKillOnClose})" 
+                                title="Auto-terminate when window closes">
+                            Auto-Kill
+                        </button>
+                    `;
+                } else {
+                    actionControls += `
+                        <button class="btn-act ${p.isAutoKillOnClose ? 'is-active-autokill' : ''}" 
+                                onclick="executePolicyToggle('${safeBase}', 'auto_kill_on_close', ${!p.isAutoKillOnClose})" 
+                                title="Auto-terminate when window closes">
+                            Auto-Kill
+                        </button>
+                    `;
+                }
+
+                if (isRunning) {
+                    actionControls += `
+                        <button class="btn-act ${p.permanentMode === 'efficiency' ? 'is-active-eff' : ''}" 
+                                onclick="executePolicyToggle('${safeBase}', 'efficiency', ${p.permanentMode !== 'efficiency'})" 
+                                title="Toggle EcoQoS Efficiency Lock">
+                            ${p.permanentMode === 'efficiency' ? 'Eco-Locked' : 'EcoQoS'}
+                        </button>
+                        <button class="btn-act btn-act-danger" onclick="executeKill(${p.pid}, '${safeName}', false)" title="End PID">
+                            End
+                        </button>
+                        <button class="btn-act btn-act-danger" onclick="executeKill(${p.pid}, '${safeName}', true)" title="End Tree">
+                            Tree
+                        </button>
+                    `;
+                } else {
+                    actionControls += `
+                        <button class="btn-act btn-act-danger" disabled title="Process not running" style="opacity: 0.35; cursor: not-allowed; pointer-events: none;">
+                            End
+                        </button>
+                        <button class="btn-act btn-act-danger" disabled title="Process not running" style="opacity: 0.35; cursor: not-allowed; pointer-events: none;">
+                            Tree
+                        </button>
+                    `;
+                }
+
+                const rowClickAttr = isRunning ? `onclick="inspectProcessByPid(${p.pid})"` : `style="cursor: default;"`;
+
+                return `
+                    <tr class="${rowClass}" ${rowClickAttr}>
+                        <td>
+                            <div class="cell-entity">
+                                <div class="status-glyph ${glyphClass}"></div>
+                                <div class="entity-name-col">
+                                    <div class="entity-title-row">
+                                        <span style="font-weight: 500;">${p.name}</span>
+                                        ${serviceTag}
+                                    </div>
+                                    ${subDesc}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="tabular-val" style="color: var(--text-muted);">${isRunning ? p.pid : '-'}</td>
+                        <td>${ramCell}</td>
+                        <td class="tabular-val" style="color: var(--text-muted);">${cpuDisplay}</td>
+                        <td style="color: var(--text-muted); font-size: 11px; font-weight: 500;">${prioDisplay}</td>
+                        <td>${policyString}</td>
+                        <td onclick="event.stopPropagation()">
+                            <div class="action-cluster">
+                                ${actionControls}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function inspectProcessByPid(pid) {
+            const proc = liveProcesses.find(p => p.pid === pid);
+            if (proc) inspectProcess(proc);
+        }
+
+        const PROTECTED_CORE = ['chrome', 'brave', 'msedge', 'antigravity', 'agy', 'code', 'explorer', 'taskmgr', 'hp.omen.omencommandcenter'];
+
+        function isProtectedApp(name) {
+            if (!name) return false;
+            const lower = name.toLowerCase().trim().replace(/\.exe$/i, '');
+            return PROTECTED_CORE.some(p => lower === p || lower.includes(p) || p.includes(lower));
+        }
+
+        function inspectProcess(p) {
+            inspectedProc = p;
+            document.getElementById('ledgerSplit').classList.add('has-inspector');
+            const pane = document.getElementById('inspectorPane');
+            pane.style.display = 'flex';
+
+            const isProtected = isProtectedApp(p.baseName);
+
+            document.getElementById('inspName').innerHTML = `${p.name} ${isProtected ? '<span class="tag-capsule tag-norm" style="color: #38bdf8; border-color: rgba(56,189,248,0.3);">PROTECTED CORE</span>' : ''}`;
+            document.getElementById('inspPid').innerText = p.pid;
+            document.getElementById('inspRam').innerText = `${((p.ramMb || 0)).toFixed(1)} MB (${(((p.ramMb || 0)) / 1024).toFixed(2)} GB)`;
+            document.getElementById('inspCpu').innerText = `${(p.cpuSec || 0).toFixed(2)} total execution seconds`;
+            document.getElementById('inspPrio').innerText = `${p.priority}${p.permanentMode === 'normal' && p.priority === 'Idle' ? ' (App Self-Throttled)' : ''}`;
+
+            const svcRow = document.getElementById('inspServiceRow');
+            if (p.isService && p.serviceDescription) {
+                svcRow.style.display = 'flex';
+                document.getElementById('inspService').innerText = p.serviceDescription;
+            } else {
+                svcRow.style.display = 'none';
+            }
+
+            document.getElementById('swEff').classList.toggle('is-on', p.permanentMode === 'efficiency');
+            document.getElementById('swAutoKill').classList.toggle('is-on', p.isAutoKillOnClose);
+            document.getElementById('swBanned').classList.toggle('is-on', p.isBannedFromBackground);
+
+            // Visual styling if protected
+            const autoKillCard = document.getElementById('swAutoKill').closest('.toggle-switch-card');
+            const banCard = document.getElementById('swBanned').closest('.toggle-switch-card');
+            if (isProtected) {
+                autoKillCard.style.opacity = '0.5';
+                banCard.style.opacity = '0.5';
+            } else {
+                autoKillCard.style.opacity = '1';
+                banCard.style.opacity = '1';
+            }
+
+            renderLedger();
+        }
+
+        function closeInspector() {
+            inspectedProc = null;
+            document.getElementById('ledgerSplit').classList.remove('has-inspector');
+            document.getElementById('inspectorPane').style.display = 'none';
+            renderLedger();
+        }
+
+        async function toggleInspectorPolicy(mode) {
+            if (!inspectedProc) return;
+            const targetName = inspectedProc.baseName;
+            const isProtected = isProtectedApp(targetName);
+
+            if (isProtected && (mode === 'auto_kill_on_close' || mode === 'ban_from_background')) {
+                notify(`${targetName} is a protected core app. Process-level kill is restricted to prevent crash loops.`);
+                return;
+            }
+            
+            let willEnable = false;
+            if (mode === 'efficiency') {
+                willEnable = inspectedProc.permanentMode !== 'efficiency';
+                document.getElementById('swEff').classList.toggle('is-on', willEnable);
+                inspectedProc.permanentMode = willEnable ? 'efficiency' : 'normal';
+            } else if (mode === 'auto_kill_on_close') {
+                willEnable = !inspectedProc.isAutoKillOnClose;
+                document.getElementById('swAutoKill').classList.toggle('is-on', willEnable);
+                inspectedProc.isAutoKillOnClose = willEnable;
+            } else if (mode === 'ban_from_background') {
+                willEnable = !inspectedProc.isBannedFromBackground;
+                document.getElementById('swBanned').classList.toggle('is-on', willEnable);
+                inspectedProc.isBannedFromBackground = willEnable;
+            }
+
+            // Optimistic update of all matching items in table
+            const normTarget = (targetName || '').toLowerCase().replace(/\.exe$/i, '').trim();
+            for (const p of (liveProcesses || [])) {
+                if (!p) continue;
+                if ((p.baseName || '').toLowerCase().replace(/\.exe$/i, '').trim() === normTarget) {
+                    if (mode === 'efficiency') p.permanentMode = willEnable ? 'efficiency' : 'normal';
+                    if (mode === 'auto_kill_on_close') p.isAutoKillOnClose = willEnable;
+                    if (mode === 'ban_from_background') p.isBannedFromBackground = willEnable;
+                }
+            }
+
+            // Optimistic update of systemRules
+            if (systemRules) {
+                const cleanTarget = (targetName || '').toLowerCase().replace(/\.exe$/i, '').trim();
+                if (mode === 'auto_kill_on_close') {
+                    if (!systemRules.auto_kill_on_close) systemRules.auto_kill_on_close = [];
+                    if (!willEnable) {
+                        systemRules.auto_kill_on_close = systemRules.auto_kill_on_close.filter(r => (r || '').toLowerCase().replace(/\.exe$/i, '').trim() !== cleanTarget);
+                    } else {
+                        if (!systemRules.auto_kill_on_close.some(r => (r || '').toLowerCase().replace(/\.exe$/i, '').trim() === cleanTarget)) {
+                            systemRules.auto_kill_on_close.push(cleanTarget);
+                        }
+                    }
+                } else if (mode === 'ban_from_background') {
+                    if (!systemRules.ban_from_background) systemRules.ban_from_background = [];
+                    if (!willEnable) {
+                        systemRules.ban_from_background = systemRules.ban_from_background.filter(r => (r || '').toLowerCase().replace(/\.exe$/i, '').trim() !== cleanTarget);
+                    } else {
+                        if (!systemRules.ban_from_background.some(r => (r || '').toLowerCase().replace(/\.exe$/i, '').trim() === cleanTarget)) {
+                            systemRules.ban_from_background.push(cleanTarget);
+                        }
+                    }
+                }
+            }
+            updateKPIs();
+            renderLedger();
+
+            try {
+                const res = await fetch('/api/rules/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: targetName, target: targetName, mode: mode, type: mode, enabled: willEnable })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    notify(data.error || 'Policy adjustment rejected');
+                    await refreshCoreData();
+                    return;
+                }
+                notify(`${targetName}: ${mode.replace(/_/g, ' ')} ${willEnable ? 'ENABLED' : 'DISABLED'}`);
+                await refreshCoreData();
+            } catch (err) {
+                notify('Communication error: ' + err.message);
+                await refreshCoreData();
+            }
+        }
+
+        async function executePolicyToggle(name, mode, explicitEnabled) {
+            const isProtected = isProtectedApp(name);
+            if (isProtected && (mode === 'auto_kill_on_close' || mode === 'ban_from_background')) {
+                notify(`${name} is a protected core app. Process-level kill is restricted to prevent crash loops.`);
+                return;
+            }
+
+            const payload = { name, target: name, mode, type: mode };
+            if (typeof explicitEnabled === 'boolean') payload.enabled = explicitEnabled;
+            const willEnable = payload.enabled !== undefined ? payload.enabled : true;
+
+            // Optimistic update of live processes
+            const normName = (name || '').toLowerCase().replace(/\.exe$/i, '').trim();
+            for (const p of (liveProcesses || [])) {
+                if (!p) continue;
+                if ((p.baseName || '').toLowerCase().replace(/\.exe$/i, '').trim() === normName) {
+                    if (mode === 'efficiency') p.permanentMode = willEnable ? 'efficiency' : 'normal';
+                    if (mode === 'auto_kill_on_close') p.isAutoKillOnClose = willEnable;
+                    if (mode === 'ban_from_background') p.isBannedFromBackground = willEnable;
+                }
+            }
+
+            // Optimistic update of systemRules for instant feedback on synthesized rows
+            if (systemRules) {
+                const cleanTarget = (name || '').toLowerCase().replace(/\.exe$/i, '').trim();
+                if (mode === 'auto_kill_on_close') {
+                    if (!systemRules.auto_kill_on_close) systemRules.auto_kill_on_close = [];
+                    if (!willEnable) {
+                        systemRules.auto_kill_on_close = systemRules.auto_kill_on_close.filter(r => (r || '').toLowerCase().replace(/\.exe$/i, '').trim() !== cleanTarget);
+                    } else {
+                        if (!systemRules.auto_kill_on_close.some(r => (r || '').toLowerCase().replace(/\.exe$/i, '').trim() === cleanTarget)) {
+                            systemRules.auto_kill_on_close.push(cleanTarget);
+                        }
+                    }
+                } else if (mode === 'ban_from_background') {
+                    if (!systemRules.ban_from_background) systemRules.ban_from_background = [];
+                    if (!willEnable) {
+                        systemRules.ban_from_background = systemRules.ban_from_background.filter(r => (r || '').toLowerCase().replace(/\.exe$/i, '').trim() !== cleanTarget);
+                    } else {
+                        if (!systemRules.ban_from_background.some(r => (r || '').toLowerCase().replace(/\.exe$/i, '').trim() === cleanTarget)) {
+                            systemRules.ban_from_background.push(cleanTarget);
+                        }
+                    }
+                }
+            }
+
+            if (inspectedProc && (inspectedProc.baseName || '').toLowerCase().replace(/\.exe$/i, '').trim() === normName) {
+                inspectProcess(inspectedProc);
+            }
+            updateKPIs();
+            renderLedger();
+
+            try {
+                const res = await fetch('/api/rules/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    notify(data.error || 'Policy update failed');
+                    await refreshCoreData();
+                    return;
+                }
+                const actionLabel = typeof payload.enabled === 'boolean' ? (payload.enabled ? 'ENABLED' : 'DISABLED') : 'UPDATED';
+                notify(`${name}: ${mode.replace(/_/g, ' ')} ${actionLabel}`);
+                await refreshCoreData();
+            } catch (err) {
+                notify('Policy execution failure: ' + err.message);
+                await refreshCoreData();
+            }
+        }
+
+        async function registerPolicy(mode) {
+            const input = document.getElementById('newRuleTarget');
+            const val = (input.value || '').trim();
+            if (!val) return;
+            await executePolicyToggle(val, mode);
+            input.value = '';
+        }
+
+        async function terminateSelected(tree) {
+            if (!inspectedProc) return;
+            await executeKill(inspectedProc.pid, inspectedProc.name, tree);
+        }
+
+        async function executeKill(pid, name, closeAll) {
+            const descriptor = closeAll ? `tree [${name}]` : `PID ${pid}`;
+            try {
+                const res = await fetch('/api/process/kill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pid, name, closeAll })
+                });
+                const data = await res.json();
+                notify(data.success ? `Terminated ${descriptor}` : `Notice: ${data.output}`);
+                if (inspectedProc && inspectedProc.pid === pid) closeInspector();
+                setTimeout(refreshCoreData, 700);
+            } catch (err) {
+                notify('Termination error: ' + err.message);
+            }
+        }
+
+        // Global hotkeys
+        window.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+                e.preventDefault();
+                document.getElementById('filterInput').focus();
+            }
+            if (e.key === 'Escape') {
+                document.getElementById('filterInput').value = '';
+                closeInspector();
+                renderLedger();
+            }
+        });
+
+        let elevationPollInterval = null;
+        let isElevatedState = false;
+
+        // R2 & R3 Elevation and Update Checkers
+        async function checkSystemStatus() {
+            try {
+                const res = await fetch('/api/status');
+                if (!res.ok) return;
+                const data = await res.json();
+                const banner = document.getElementById('elevationPrompt');
+                const btn = document.getElementById('btnElevate');
+                const badge = document.querySelector('.daemon-badge');
+                if (data.elevated) {
+                    isElevatedState = true;
+                    if (banner) banner.style.display = 'none';
+                    if (btn) {
+                        btn.style.display = 'none';
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        btn.textContent = 'Relaunch as Administrator';
+                    }
+                    if (badge) badge.innerHTML = '<div class="pulsing-node"></div> DAEMON ELEVATED';
+                    if (elevationPollInterval) {
+                        clearInterval(elevationPollInterval);
+                        elevationPollInterval = null;
+                        notify('Elevation confirmed: running with Administrator privileges.');
+                    }
+                } else {
+                    isElevatedState = false;
+                    if (banner) banner.style.display = 'flex';
+                    if (btn) {
+                        btn.style.display = 'inline-block';
+                        if (!elevationPollInterval) {
+                            btn.disabled = false;
+                            btn.style.opacity = '1';
+                            btn.textContent = 'Relaunch as Administrator';
+                        }
+                    }
+                    if (badge) badge.innerHTML = '<div class="pulsing-node" style="background: var(--accent-amber);"></div> UNPRIVILEGED';
+                }
+            } catch (e) {}
+        }
+
+        async function triggerElevation() {
+            const btn = document.getElementById('btnElevate');
+            const banner = document.getElementById('elevationPrompt');
+            try {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.6';
+                    btn.textContent = 'Launching UAC...';
+                }
+                notify('Requesting Administrator elevation...');
+                const res = await fetch('/api/elevate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dryRun: false })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.alreadyElevated) {
+                        notify('Elevation confirmed: already running as Administrator.');
+                        if (banner) banner.style.display = 'none';
+                        if (btn) btn.style.display = 'none';
+                        const badge = document.querySelector('.daemon-badge');
+                        if (badge) badge.innerHTML = '<div class="pulsing-node"></div> DAEMON ELEVATED';
+                        return;
+                    }
+                    notify('UAC elevation command launched. Awaiting permission...');
+                    if (btn) {
+                        btn.textContent = 'Awaiting UAC approval...';
+                    }
+                    setTimeout(checkSystemStatus, 800);
+                    setTimeout(checkSystemStatus, 1800);
+                    setTimeout(checkSystemStatus, 3000);
+                    if (!elevationPollInterval) {
+                        elevationPollInterval = setInterval(checkSystemStatus, 2000);
+                    }
+                    // Reset button if user cancels or elevation is not confirmed after 25s
+                    setTimeout(() => {
+                        if (btn && btn.style.display !== 'none' && !isElevatedState) {
+                            btn.disabled = false;
+                            btn.style.opacity = '1';
+                            btn.textContent = 'Relaunch as Administrator';
+                        }
+                    }, 25000);
+                } else {
+                    notify('Elevation request failed: ' + (data.error || 'Unknown error'));
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        btn.textContent = 'Relaunch as Administrator';
+                    }
+                }
+            } catch (err) {
+                notify('Elevation error: ' + err.message);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.textContent = 'Relaunch as Administrator';
+                }
+            }
+        }
+
+        async function checkForUpdates() {
+            try {
+                const res = await fetch('/api/updates/check');
+                if (!res.ok) return;
+                const data = await res.json();
+                const banner = document.getElementById('updateNotification');
+                if (data.updateAvailable && banner) {
+                    const txt = document.getElementById('updateText');
+                    if (txt) txt.textContent = `New release v${data.latestVersion} available!`;
+                    banner.style.display = 'flex';
+                }
+            } catch (e) {}
+        }
+
+        async function applyUpdate() {
+            try {
+                notify('Downloading and staging update...');
+                await fetch('/api/updates/download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+                const res = await fetch('/api/updates/apply?dryRun=true', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dryRun: true }) });
+                const data = await res.json();
+                notify(data.success ? 'Update staged. Ready to restart.' : data.error);
+            } catch (e) {
+                notify('Update error: ' + e.message);
+            }
+        }
+
+        // Loop telemetry
+        setInterval(refreshCoreData, 3500);
+        setInterval(fetchSystemMemory, 5000);
+        setInterval(checkSystemStatus, 4000);
+
+        refreshCoreData();
+        fetchSystemMemory();
+        checkSystemStatus();
+        checkForUpdates();
+    </script>
+</body>
+</html>
