@@ -101,6 +101,8 @@ EfficiencyHub is built on an elegant, decoupled dual-process architecture:
 > 1. Download **[`EfficiencyHub_Setup_v2.4.0.exe`](https://github.com/smitlad01/Efficiencyhub/raw/main/installer/Output/EfficiencyHub_Setup_v2.4.0.exe)**.
 > 2. Right-click and choose **Run as administrator** (pre-flight checks ensure required Windows permissions, .NET 4.5+, and Node.js are present before proceeding).
 > 3. Finish the wizard: EfficiencyHub will automatically configure the background daemon and launch the dashboard.
+>
+> > **Note on Windows SmartScreen**: If Windows displays *"Windows protected your PC"*, simply click **More info** ➔ **Run anyway**. This standard prompt appears for newly-published open-source software that does not use commercial enterprise code-signing certificates.
 
 ---
 
