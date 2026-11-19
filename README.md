@@ -14,7 +14,17 @@
 [![Tests Passing](https://img.shields.io/badge/Tests-82%20Passing-success.svg)](tests/)
 [![GitHub Stars](https://img.shields.io/github/stars/smitlad01/Efficiencyhub?style=social)](https://github.com/smitlad01/Efficiencyhub.git)
 
-[Features](#features) • [Quick Start](#installation) • [How It Works](#how-it-works) • [Security & Safety](#security--system-safety) • [API](#api) • [Documentation](#documentation)
+<p align="center">
+  <a href="https://github.com/smitlad01/Efficiencyhub/raw/main/installer/Output/EfficiencyHub_Setup_v2.4.0.exe">
+    <img src="https://img.shields.io/badge/Download_Setup_.EXE-EfficiencyHub_v2.4.0-2ea44f?style=for-the-badge&logo=windows&logoColor=white" height="42" alt="Download EfficiencyHub Setup .exe" />
+  </a>
+</p>
+<p align="center">
+  <b><a href="https://github.com/smitlad01/Efficiencyhub/raw/main/installer/Output/EfficiencyHub_Setup_v2.4.0.exe">⚡ Click Here to Download EfficiencyHub_Setup_v2.4.0.exe (Standalone Windows Installer)</a></b><br>
+  <sub>Standard Windows Setup • Pre-flight Permission Checks • Zero Telemetry • 1-Click Install</sub>
+</p>
+
+[Features](#features) • [Download Installer](#installation) • [How It Works](#how-it-works) • [Security & Safety](#security--system-safety) • [API](#api) • [Documentation](#documentation)
 
 </div>
 
@@ -84,10 +94,15 @@ EfficiencyHub is built on an elegant, decoupled dual-process architecture:
 
 ## Installation
 
-### Option 1: Standalone Windows Installer (Recommended)
-Download the latest `EfficiencyHub_Setup_v2.4.0.exe` from the [Releases](https://github.com/smitlad01/Efficiencyhub/releases) tab.
-- Includes pre-flight checks that verify Administrator privileges, .NET Framework 4.5+, and Node.js.
-- Registers shortcuts and sets up the watcher daemon automatically.
+### 🚀 Direct Standalone Installer Download (.exe) — Recommended
+> ### [⬇️ **Download EfficiencyHub_Setup_v2.4.0.exe**](https://github.com/smitlad01/Efficiencyhub/raw/main/installer/Output/EfficiencyHub_Setup_v2.4.0.exe)
+> *(Direct download of compiled Windows installer executable • 2.1 MB)*
+>
+> 1. Download **[`EfficiencyHub_Setup_v2.4.0.exe`](https://github.com/smitlad01/Efficiencyhub/raw/main/installer/Output/EfficiencyHub_Setup_v2.4.0.exe)**.
+> 2. Right-click and choose **Run as administrator** (pre-flight checks ensure required Windows permissions, .NET 4.5+, and Node.js are present before proceeding).
+> 3. Finish the wizard: EfficiencyHub will automatically configure the background daemon and launch the dashboard.
+
+---
 
 ### Option 2: Run Directly from Source
 ```cmd
