@@ -30,7 +30,8 @@
     "nvdisplay.container",
     "nvcontainer",
     "antigravity ide",
-    "powershell"
+    "powershell",
+    "msedgewebview2"
   ],
   "normal": [
     "chrome",
